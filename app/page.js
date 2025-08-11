@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "../components/ui/button";
 import { Layout } from "lucide-react";
 import Image from "next/image";
 

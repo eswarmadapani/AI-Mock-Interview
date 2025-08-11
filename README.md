@@ -1,156 +1,104 @@
-# 🚀 AI Mock Interview Platform
+# AI Mock Interview Application
 
-An AI-powered platform for creating and conducting mock interviews with real-time feedback and analytics.
+A Next.js application that helps users prepare for job interviews by generating personalized interview questions using AI.
 
-## 🌟 Features
+## Features
 
-- **🔐 Secure Authentication** - Powered by Clerk
-- **📊 Interactive Dashboard** - Modern, responsive design
-- **🎯 Mock Interviews** - Create and conduct practice interviews
-- **📈 Progress Tracking** - Monitor your interview performance
-- **🤖 AI-Powered Feedback** - Get intelligent insights and recommendations
-- **📱 Responsive Design** - Works on all devices
+- 🔐 Clerk Authentication
+- 🤖 AI-powered interview question generation using Google Gemini
+- 📝 Interactive interview form
+- 🎨 Modern UI with Tailwind CSS
 
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework:** Next.js 15.4.5
-- **UI Library:** React 19.1.0
-- **Styling:** Tailwind CSS v4
-- **Icons:** Lucide React
-- **Components:** Radix UI
-
-### Backend & Services
-- **Authentication:** Clerk
-- **Database:** (Coming Soon)
-- **API:** Next.js API Routes
-- **Deployment:** Vercel (Planned)
-
-## 🚀 Getting Started
+## Setup
 
 ### Prerequisites
-- Node.js 20+
+
+- Node.js 18+ 
 - npm or yarn
-- Git
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/eswarmadapani/AI-Mock-Interview.git
-   cd AI-Mock-Interview
-   ```
-
-2. **Install dependencies**
+1. Clone the repository
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. **Set up environment variables**
-   ```bash
-   # Create .env.local file
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key_here
-   CLERK_SECRET_KEY=your_secret_key_here
-   ```
+### Environment Variables
 
-4. **Run the development server**
-   ```bash
-   npm run dev
-   ```
+Create a `.env.local` file in the root directory with the following variables:
 
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+```env
+# Clerk Authentication
+# Get these from your Clerk dashboard: https://dashboard.clerk.com/
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
 
-## 📁 Project Structure
+# Gemini AI
+# Get this from Google AI Studio: https://makersuite.google.com/app/apikey
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### Getting API Keys
+
+1. **Clerk Authentication**:
+   - Go to [Clerk Dashboard](https://dashboard.clerk.com/)
+   - Create a new application
+   - Copy the Publishable Key from the API Keys section
+
+2. **Google Gemini AI**:
+   - Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Create a new API key
+   - Copy the API key
+
+### Running the Application
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Troubleshooting
+
+### Clerk Authentication Error
+
+If you see "Failed to load Clerk" error:
+
+1. Ensure `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is set in your `.env.local` file
+2. Verify the key is correct in your Clerk dashboard
+3. Make sure you're using the correct environment (test/production)
+
+### Gemini AI Error
+
+If you see "response.text is not a function" error:
+
+1. Ensure `NEXT_PUBLIC_GEMINI_API_KEY` is set in your `.env.local` file
+2. Verify the API key is valid and has quota remaining
+3. Check the Google AI Studio dashboard for any quota limitations
+
+### Development Mode
+
+The application includes a mock mode for development. If you set `NEXT_PUBLIC_GEMINI_API_KEY=mock`, it will return sample interview questions without making API calls.
+
+## Project Structure
 
 ```
 ai-mock/
 ├── app/                    # Next.js app directory
 │   ├── (auth)/            # Authentication pages
-│   ├── dashboard/         # Dashboard pages
-│   ├── globals.css        # Global styles
-│   └── layout.js          # Root layout
-├── components/            # Reusable components
-│   └── ui/               # UI components
-├── lib/                  # Utility functions
-├── public/               # Static assets
-├── scripts/              # Development scripts
-└── DEVELOPMENT_LOG.md    # Progress tracking
+│   ├── dashboard/         # Main dashboard
+│   └── layout.js          # Root layout with Clerk provider
+├── components/            # Reusable UI components
+├── utils/                 # Utility functions
+│   ├── GeminiAi.js        # AI integration
+│   └── db.js             # Database utilities
+└── middleware.js          # Clerk middleware
 ```
 
-## 🎯 Development Workflow
+## Technologies Used
 
-### Daily Development Process
-
-1. **Start your day**
-   ```bash
-   git pull origin master
-   npm run dev
-   ```
-
-2. **Work on features**
-   - Follow the project phases in `DEVELOPMENT_LOG.md`
-   - Keep commits small and focused
-
-3. **End of day commit**
-   ```bash
-   # Manual commit
-   git add .
-   git commit -m "📅 YYYY-MM-DD: [Feature Name]
-   
-   🎯 Feature: Description
-   📝 Changes:
-   - Change 1
-   - Change 2
-   
-   🔧 Tech: Technologies used"
-   git push origin master
-   
-   # Or use the automated script
-   ./scripts/daily-commit.sh "Feature Name" "Description"
-   ```
-
-### Project Phases
-
-- ✅ **Phase 1: Foundation** - Authentication, Dashboard, Navigation
-- 🔄 **Phase 2: Question Management** - Question creation, categories, search
-- ⏳ **Phase 3: Interview System** - Mock interviews, sessions, analytics
-- ⏳ **Phase 4: User Experience** - Profiles, progress tracking, insights
-- ⏳ **Phase 5: Advanced Features** - AI generation, voice recognition
-
-## 📊 Progress Tracking
-
-Check `DEVELOPMENT_LOG.md` for:
-- Daily progress updates
-- Feature completion status
-- Technical notes and decisions
-- Weekly goals and milestones
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org/) - React framework
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
-- [Clerk](https://clerk.com/) - Authentication
-- [Lucide React](https://lucide.dev/) - Icons
-
-## 📞 Contact
-
-- **Developer:** Eswar Madapani
-- **GitHub:** [@eswarmadapani](https://github.com/eswarmadapani)
-- **Repository:** [AI-Mock-Interview](https://github.com/eswarmadapani/AI-Mock-Interview.git)
-
----
-
-⭐ **Star this repository if you find it helpful!**
+- **Next.js 15** - React framework
+- **Clerk** - Authentication
+- **Google Gemini AI** - AI question generation
+- **Tailwind CSS** - Styling
+- **Radix UI** - UI components
