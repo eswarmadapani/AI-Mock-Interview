@@ -3,7 +3,7 @@ import Header from './_components/Header'
 
 function Dashboardlayout({children}) {
   return (
-    <div>
+    <div className='dark:bg-gray-900 min-h-screen'>
       <Header/>
       <div className='mx-5 md:mx-20 lg:mx-36'>
         {children}

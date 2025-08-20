@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 
 export async function generateInterviewQuestions(prompt) {
@@ -10,6 +9,7 @@ export async function generateInterviewQuestions(prompt) {
 
   // Temporary mock response for development while API key issues are resolved
   if (apiKey === 'mock' || apiKey === 'test') {
+    console.log("=== DEBUG: Using mock response for questions ===");
     return [
       {
         question: "Describe your experience with React.js, including your proficiency level and any complex projects you've built.",
@@ -99,9 +99,15 @@ Make sure the questions are relevant to the job position, tech stack, and experi
       // If parsing fails, return the raw text response
       return responseText;
     } catch (error) {
-      // If it's a quota/rate limit error, try the next model
-      if (error.message && (error.message.includes('429') || error.message.includes('quota_limit_value":"0"'))) {
-        console.log(`Model ${model} failed due to quota, trying next model...`);
+      // If it's a quota/rate limit error or model overloaded, try the next model
+      if (error.message && (
+        error.message.includes('429') || 
+        error.message.includes('quota_limit_value":"0"') ||
+        error.message.includes('503') ||
+        error.message.includes('overloaded') ||
+        error.message.includes('UNAVAILABLE')
+      )) {
+        console.log(`Model ${model} failed due to quota/overload (${error.message}), trying next model...`);
         continue;
       }
       // For other errors, throw immediately
@@ -109,6 +115,101 @@ Make sure the questions are relevant to the job position, tech stack, and experi
     }
   }
   
-  // If all models fail due to quota, throw a clear error
-  throw new Error('All available models have quota limitations. Please check your Google AI Studio settings or wait a moment and try again.');
+  // If all models fail due to quota or overload, throw a clear error
+  throw new Error('All available models are currently unavailable (overloaded or quota limited). Please wait a few minutes and try again, or check your Google AI Studio settings.');
+}
+
+// New function to get feedback on user answers
+export async function getAnswerFeedback(question, userAnswer) {
+  console.log("=== DEBUG: getAnswerFeedback called ===");
+  console.log("Question:", question);
+  console.log("User Answer:", userAnswer);
+  
+  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  
+  console.log("=== DEBUG: API Key:", apiKey);
+  
+  if (!apiKey) {
+    console.log("=== DEBUG: No API key found, using mock ===");
+    // Mock response for development
+    const mockResponse = {
+      rating: 8,
+      feedback: "Good answer! You demonstrated solid understanding of the concepts. To improve further, consider adding more specific examples from your experience and mentioning any performance optimizations you've implemented."
+    };
+    console.log("=== DEBUG: Mock response ===", mockResponse);
+    return mockResponse;
+  }
+
+  console.log("=== DEBUG: Using real API ===");
+  const ai = new GoogleGenAI({
+    apiKey: apiKey,
+  });
+
+  const models = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash-exp"];
+  
+  const feedbackPrompt = `Question: ${question}
+User Answer: ${userAnswer}
+Based on the question and user answer, please provide a rating (1-10) and feedback for improvement in 3-5 lines. Focus on technical accuracy, completeness, and clarity. Return ONLY a valid JSON object in this format:
+{
+  "rating": 8,
+  "feedback": "Your feedback here"
+}`;
+
+  for (const model of models) {
+    try {
+      console.log(`=== DEBUG: Trying model ${model} ===`);
+      const response = await ai.models.generateContent({
+        model,
+        contents: [
+          {
+            role: "user",
+            parts: [
+              {
+                text: feedbackPrompt,
+              },
+            ],
+          },
+        ],
+      });
+
+      const responseText = response.candidates[0].content.parts[0].text;
+      
+      // Clean the response text
+      let cleanText = responseText.trim();
+      
+      // Remove markdown code blocks
+      if (cleanText.startsWith('```json')) {
+        cleanText = cleanText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanText.startsWith('```')) {
+        cleanText = cleanText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      try {
+        const parsedResponse = JSON.parse(cleanText);
+        console.log("=== DEBUG: Parsed response ===", parsedResponse);
+        return parsedResponse;
+      } catch (parseError) {
+        console.warn('Failed to parse JSON response:', parseError);
+        return {
+          rating: 7,
+          feedback: responseText
+        };
+      }
+      
+    } catch (error) {
+      if (error.message && (
+        error.message.includes('429') || 
+        error.message.includes('quota_limit_value":"0"') ||
+        error.message.includes('503') ||
+        error.message.includes('overloaded') ||
+        error.message.includes('UNAVAILABLE')
+      )) {
+        console.log(`Model ${model} failed due to quota/overload (${error.message}), trying next model...`);
+        continue;
+      }
+      throw error;
+    }
+  }
+  
+  throw new Error('All available models are currently unavailable (overloaded or quota limited). Please wait a few minutes and try again.');
 }
