@@ -2,7 +2,7 @@ import React from 'react'
 import AddNewinterview from './_components/AddNewInterview'
 import InterviewList from './_components/InterviewList'
 
-function Dashboard({children}) {
+function Dashboard() {
   return (
     <div className="dark:bg-gray-900 min-h-screen">
       <h2 className='font-bold text-2xl dark:text-gray-100'>Dashboard</h2>
