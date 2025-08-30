@@ -141,3 +141,19 @@
 .ccompli2 {
   stop-color: #8263DB;
 }
+
+/* Clerk Auth Modal Fixes */
+.cl-rootBox,
+.cl-card,
+.cl-main,
+.cl-modalContent {
+  transform: none !important;
+  writing-mode: initial !important;
+  text-orientation: initial !important;
+}
+
+.cl-modalBackdrop {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

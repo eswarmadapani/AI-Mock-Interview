@@ -1,5 +1,16 @@
 import { SignIn } from '@clerk/nextjs'
 
 export default function SignInPage() {
-  return <SignIn />
-} 
+  return (
+    <div className="flex items-center justify-center">
+      <SignIn 
+        appearance={{
+          elements: {
+            rootBox: "mx-auto",
+            card: "shadow-lg border-0"
+          }
+        }}
+      />
+    </div>
+  )
+}
